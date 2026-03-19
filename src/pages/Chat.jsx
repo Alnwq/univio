@@ -60,13 +60,13 @@ export default function Chat() {
   useEffect(() => {
     activeRoomIdRef.current = activeRoomId
     loadMessages(activeRoomId)
+    // Always jump to bottom when switching rooms
+    setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'instant' }), 100)
   }, [activeRoomId])
 
   useEffect(() => {
-    const container = bottomRef.current?.parentElement
-    if (!container) return
-    const nearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120
-    if (nearBottom) bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    // Scroll to bottom whenever messages load
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
   const loadMessages = async (roomId) => {
