@@ -8,226 +8,229 @@ import People from './People'
 import Profile from './Profile'
 import Chat from './Chat'
 
+const NAV = [
+  { id: 'feed',    label: 'Feed',        icon: <HomeIcon /> },
+  { id: 'courses', label: 'Courses',     icon: <CoursesIcon /> },
+  { id: 'map',     label: 'Study Map',   icon: <MapIcon /> },
+  { id: 'people',  label: 'People',      icon: <PeopleIcon /> },
+  { id: 'groups',  label: 'Messages',    icon: <ChatIcon /> },
+  { id: 'profile', label: 'My Profile',  icon: <ProfileIcon /> },
+]
+
+const PAGE_TITLES = {
+  feed: 'Feed', courses: 'My Courses', map: 'Study Spots',
+  people: 'Find People', groups: 'Messages', profile: 'My Profile',
+}
+
 export default function Dashboard() {
-  const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState(null)
+  const [user,      setUser]      = useState(null)
+  const [profile,   setProfile]   = useState(null)
   const [activeTab, setActiveTab] = useState('feed')
-  const [messageCount, setMessageCount] = useState(0)
-  const navigate = useNavigate()
-  const location = useLocation()
+  const navigate  = useNavigate()
+  const location  = useLocation()
 
   useEffect(() => {
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return navigate('/')
       setUser(user)
-
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+      const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
       setProfile(profile)
-
-      // Get real message count
-      const { data: messages } = await supabase
-        .from('messages')
-        .select('id')
-      setMessageCount(messages?.length || 0)
     }
     init()
-
-    // Set active tab based on URL
     const path = location.pathname.substring(1)
-    if (['feed', 'courses', 'map', 'people', 'groups', 'profile'].includes(path)) {
-      setActiveTab(path)
-    }
+    if (NAV.some(n => n.id === path)) setActiveTab(path)
   }, [location])
 
-  const signOut = async () => {
-    await supabase.auth.signOut()
-    navigate('/')
-  }
+  const signOut = async () => { await supabase.auth.signOut(); navigate('/') }
 
-  const navigateTo = (tab) => {
-    setActiveTab(tab)
-    navigate(`/${tab}`)
-  }
+  const navigateTo = (tab) => { setActiveTab(tab); navigate(`/${tab}`) }
+
+  const initials = profile?.full_name
+    ? profile.full_name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
+    : profile?.email?.[0]?.toUpperCase() || 'U'
 
   return (
-    <div className="flex h-screen" style={{background: '#FAF8F4'}}>
-      {/* Sidebar */}
-      <div 
-        className="w-64 flex flex-col border-r"
-        style={{background: 'white', borderColor: '#E5E5E5'}}
-      >
-        {/* Logo */}
-        <div className="p-6 border-b" style={{borderColor: '#E5E5E5'}}>
-          <h1 className="text-2xl font-bold" style={{fontFamily: 'system-ui'}}>
-            <span style={{color: '#7C6AF0'}}>univ</span>
-            <span style={{color: '#1A1824'}}>io</span>
-          </h1>
-        </div>
+    <div style={{ display: 'flex', height: '100vh', background: 'var(--bg)', overflow: 'hidden' }}>
 
-        {/* Navigation */}
-        <div className="flex-1 p-4">
-          <p className="text-xs font-bold uppercase tracking-wide mb-3 px-2" style={{color: '#B0AFBF'}}>
-            Navigation
-          </p>
-          <div className="space-y-1">
-            <NavLink 
-              icon="🏠" 
-              label="Feed" 
-              active={activeTab === 'feed'}
-              onClick={() => navigateTo('feed')}
-            />
-            <NavLink 
-              icon="📚" 
-              label="Courses" 
-              active={activeTab === 'courses'}
-              onClick={() => navigateTo('courses')}
-            />
-            <NavLink 
-              icon="🗺️" 
-              label="Study Map" 
-              active={activeTab === 'map'}
-              onClick={() => navigateTo('map')}
-            />
-            <NavLink 
-              icon="👥" 
-              label="People" 
-              active={activeTab === 'people'}
-              onClick={() => navigateTo('people')}
-            />
-            <NavLink 
-              icon="💬" 
-              label="Groups" 
-              active={activeTab === 'groups'}
-              onClick={() => navigateTo('groups')}
-              badge={null}
-            />
-            <NavLink 
-              icon="👤" 
-              label="My Profile" 
-              active={activeTab === 'profile'}
-              onClick={() => navigateTo('profile')}
-            />
+      {/* ── Dark Sidebar ── */}
+      <aside style={{
+        width: 240,
+        minWidth: 240,
+        background: 'var(--sidebar-bg)',
+        display: 'flex',
+        flexDirection: 'column',
+        borderRight: '1px solid rgba(255,255,255,0.05)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Subtle gradient orb */}
+        <div style={{
+          position: 'absolute', top: -60, left: -60,
+          width: 200, height: 200, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(123,94,167,0.3) 0%, transparent 70%)',
+          pointerEvents: 'none',
+        }} />
+
+        {/* Logo */}
+        <div style={{ padding: '28px 24px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 34, height: 34, borderRadius: 10,
+              background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(123,94,167,0.4)',
+            }}>
+              <span style={{ color: 'white', fontSize: 16, fontWeight: 800, fontFamily: 'Syne, sans-serif' }}>U</span>
+            </div>
+            <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: 'white', letterSpacing: '-0.5px' }}>
+              univio
+            </span>
           </div>
         </div>
 
-        {/* User Section */}
-        <div className="p-4 border-t" style={{borderColor: '#E5E5E5'}}>
+        {/* Nav */}
+        <nav style={{ flex: 1, padding: '16px 12px', overflowY: 'auto' }}>
+          <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '1.5px', color: 'var(--sidebar-muted)', padding: '0 12px', marginBottom: 8, textTransform: 'uppercase' }}>
+            Navigate
+          </p>
+          {NAV.map(({ id, label, icon }) => {
+            const isActive = activeTab === id
+            return (
+              <button key={id} onClick={() => navigateTo(id)}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '10px 12px', borderRadius: 10, border: 'none', cursor: 'pointer',
+                  marginBottom: 2, textAlign: 'left',
+                  background: isActive ? 'rgba(123,94,167,0.25)' : 'transparent',
+                  color: isActive ? 'white' : 'var(--sidebar-text)',
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontWeight: isActive ? 600 : 400,
+                  fontSize: 14,
+                  transition: 'all 0.15s ease',
+                  position: 'relative',
+                }}
+                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
+                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent' }}
+              >
+                {isActive && (
+                  <div style={{
+                    position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+                    width: 3, height: 20, borderRadius: 99,
+                    background: 'linear-gradient(180deg, #9B7FCC, #7B5EA7)',
+                  }} />
+                )}
+                <span style={{ opacity: isActive ? 1 : 0.7, display: 'flex', alignItems: 'center' }}>{icon}</span>
+                {label}
+              </button>
+            )
+          })}
+        </nav>
+
+        {/* User footer */}
+        <div style={{ padding: '12px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
           {profile?.role === 'supervisor' && (
-            <button
-              onClick={() => navigate('/supervisor')}
-              className="w-full text-sm mb-3 transition py-2 px-3 rounded-lg text-left"
-              style={{color: '#7C6AF0', background: '#EDE9FF', fontWeight: 600}}
-            >
+            <button onClick={() => navigate('/supervisor')}
+              style={{
+                width: '100%', marginBottom: 8, padding: '8px 12px',
+                borderRadius: 8, border: '1px solid rgba(123,94,167,0.4)',
+                background: 'rgba(123,94,167,0.15)', color: '#C4A8F0',
+                fontSize: 13, fontWeight: 600, cursor: 'pointer', textAlign: 'left',
+              }}>
               📊 Admin Dashboard
             </button>
           )}
-          <div className="flex items-center gap-3 mb-3 p-2 rounded-lg cursor-pointer hover:bg-gray-50">
-            <div 
-              className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
-              style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
-            >
-              {profile?.full_name?.[0] || profile?.email?.[0] || 'U'}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 10, cursor: 'pointer' }}
+               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
+               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10, flexShrink: 0,
+              background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, color: 'white', fontSize: 13,
+              fontFamily: 'Syne, sans-serif',
+            }}>
+              {initials}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold truncate" style={{color: '#1A1824'}}>
-                {profile?.full_name || 'User'}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ color: 'white', fontSize: 13, fontWeight: 600, margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {profile?.full_name || 'Student'}
               </p>
-              <p className="text-xs truncate" style={{color: '#7A788F'}}>
-                🌱 Open to meet
-              </p>
+              <p style={{ color: 'var(--sidebar-muted)', fontSize: 11, margin: 0 }}>Online</p>
             </div>
-          </div>
-          <button 
-            onClick={signOut}
-            className="text-sm w-full text-left transition hover:opacity-70"
-            style={{color: '#7A788F'}}
-          >
-            Sign Out
-          </button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top Bar */}
-        <div 
-          className="h-16 px-8 flex items-center justify-between border-b"
-          style={{background: 'white', borderColor: '#E5E5E5'}}
-        >
-          <h2 className="text-xl font-bold" style={{color: '#1A1824'}}>
-            {activeTab === 'feed' && 'Feed'}
-            {activeTab === 'courses' && 'My Courses'}
-            {activeTab === 'map' && 'Study Spots Map'}
-            {activeTab === 'people' && 'Find People'}
-            {activeTab === 'groups' && 'My Groups'}
-            {activeTab === 'profile' && 'My Profile'}
-          </h2>
-          
-          <div className="flex items-center gap-3">
-            <div 
-              className="flex items-center gap-2 px-4 py-2 rounded-lg border"
-              style={{background: '#FAF8F4', borderColor: '#E5E5E5'}}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7A788F" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
-              </svg>
-              <input 
-                placeholder="Search students, courses..."
-                className="text-sm outline-none bg-transparent"
-                style={{color: '#1A1824', width: '200px'}}
-              />
-            </div>
-            
-            <button 
-              className="w-10 h-10 rounded-lg flex items-center justify-center relative"
-              style={{background: '#FAF8F4'}}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7A788F" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
+            <button onClick={signOut}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--sidebar-muted)', fontSize: 11, flexShrink: 0 }}
+              title="Sign out">
+              <LogoutIcon />
             </button>
           </div>
         </div>
+      </aside>
 
-        {/* Page Content */}
-        {activeTab === 'feed' && <Feed />}
-        {activeTab === 'courses' && <Courses />}
-        {activeTab === 'map' && <StudyMap />}
-        {activeTab === 'people' && <People />}
-        {activeTab === 'groups' && <Chat />}
-        {activeTab === 'profile' && <Profile />}
+      {/* ── Main content ── */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+
+        {/* Top bar */}
+        <header style={{
+          height: 60, padding: '0 28px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          background: 'var(--card)', borderBottom: '1px solid var(--border)',
+          flexShrink: 0,
+        }}>
+          <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 18, color: 'var(--text)', margin: 0 }}>
+            {PAGE_TITLES[activeTab]}
+          </h1>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            {/* Search */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              padding: '7px 14px', borderRadius: 10,
+              background: 'var(--bg)', border: '1.5px solid var(--border)',
+            }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2.5">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+              </svg>
+              <input placeholder="Search…" style={{
+                background: 'none', border: 'none', outline: 'none',
+                fontSize: 13, color: 'var(--text)', width: 160,
+              }} />
+            </div>
+
+            {/* Avatar */}
+            <div style={{
+              width: 34, height: 34, borderRadius: 10, flexShrink: 0,
+              background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontWeight: 700, color: 'white', fontSize: 12,
+              fontFamily: 'Syne, sans-serif',
+              boxShadow: '0 2px 8px rgba(123,94,167,0.3)',
+              cursor: 'pointer',
+            }} onClick={() => navigateTo('profile')}>
+              {initials}
+            </div>
+          </div>
+        </header>
+
+        {/* Page */}
+        <main style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+          {activeTab === 'feed'    && <Feed />}
+          {activeTab === 'courses' && <Courses />}
+          {activeTab === 'map'     && <StudyMap />}
+          {activeTab === 'people'  && <People />}
+          {activeTab === 'groups'  && <Chat />}
+          {activeTab === 'profile' && <Profile />}
+        </main>
       </div>
     </div>
   )
 }
 
-function NavLink({ icon, label, active, onClick, badge }) {
-  return (
-    <div
-      onClick={onClick}
-      className="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer transition"
-      style={{
-        background: active ? '#EDE9FF' : 'transparent',
-        color: active ? '#7C6AF0' : '#7A788F'
-      }}
-    >
-      <span className="text-lg">{icon}</span>
-      <span className="text-sm font-semibold flex-1">{label}</span>
-      {badge && (
-        <span 
-          className="px-2 py-0.5 rounded-full text-xs font-bold"
-          style={{background: '#7C6AF0', color: 'white'}}
-        >
-          {badge}
-        </span>
-      )}
-    </div>
-  )
-}
+// ── SVG Icons ──────────────────────────────────────────────────────────────────
+function HomeIcon()    { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg> }
+function CoursesIcon() { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> }
+function MapIcon()     { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polygon points="1,6 1,22 8,18 16,22 23,18 23,2 16,6 8,2"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> }
+function PeopleIcon()  { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> }
+function ChatIcon()    { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> }
+function ProfileIcon() { return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> }
+function LogoutIcon()  { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16,17 21,12 16,7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> }

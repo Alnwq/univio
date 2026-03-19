@@ -129,10 +129,10 @@ export default function Feed() {
       {/* Greeting with Status */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold mb-2" style={{color: '#1A1824'}}>
+          <h1 className="text-3xl font-bold mb-2" style={{color: 'var(--text)'}}>
             Hey {profile?.full_name || 'there'} 👋
           </h1>
-          <p style={{color: '#7A788F'}}>Welcome to your Univio feed</p>
+          <p style={{color: 'var(--text-muted)'}}>Welcome to your Univio feed</p>
         </div>
         
         {/* Study Status Selector */}
@@ -140,7 +140,7 @@ export default function Feed() {
           <button
             onClick={() => setShowStatusMenu(!showStatusMenu)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg transition"
-            style={{background: '#EDE9FF', color: '#7C6AF0'}}
+            style={{background: 'var(--accent-light)', color: 'var(--accent)'}}
           >
             <span>{statusIcons[profile?.study_status || 'available']}</span>
             <span className="font-semibold">
@@ -154,7 +154,7 @@ export default function Feed() {
           {showStatusMenu && (
             <div 
               className="absolute right-0 mt-2 rounded-lg p-2 shadow-lg z-10"
-              style={{background: 'white', border: '1px solid #E5E5E5', minWidth: '200px'}}
+              style={{background: 'var(--card)', border: '1px solid var(--border)', minWidth: '200px'}}
             >
               <button
                 onClick={() => updateStatus('available')}
@@ -194,15 +194,15 @@ export default function Feed() {
           {/* Live Activity Feed */}
           <div 
             className="rounded-2xl p-6"
-            style={{background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5'}}
+            style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
           >
-            <h3 className="font-bold mb-4 flex items-center gap-2" style={{color: '#1A1824'}}>
+            <h3 className="font-bold mb-4 flex items-center gap-2" style={{color: 'var(--text)'}}>
               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
               Live Activity
             </h3>
             
             {activities.length === 0 ? (
-              <p className="text-center py-4" style={{color: '#7A788F'}}>No recent activity</p>
+              <p className="text-center py-4" style={{color: 'var(--text-muted)'}}>No recent activity</p>
             ) : (
               <div className="space-y-3">
                 {activities.slice(0, 5).map(activity => {
@@ -213,15 +213,15 @@ export default function Feed() {
                     <div key={activity.id} className="flex items-start gap-3">
                       <div 
                         className="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
-                        style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
+                        style={{background: 'linear-gradient(135deg, var(--accent), var(--accent2))'}}
                       >
                         {actor?.full_name?.[0] || '?'}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm" style={{color: '#1A1824'}}>
+                        <p className="text-sm" style={{color: 'var(--text)'}}>
                           <strong>{actor?.full_name || actor?.email}</strong> {activity.content}
                         </p>
-                        <p className="text-xs mt-1" style={{color: '#B0AFBF'}}>{timeAgo}</p>
+                        <p className="text-xs mt-1" style={{color: 'var(--text-muted)'}}>{timeAgo}</p>
                       </div>
                     </div>
                   )
@@ -241,7 +241,7 @@ export default function Feed() {
             >
               <div 
                 className="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0"
-                style={{background: 'rgba(255,255,255,0.22)', border: '2px solid rgba(255,255,255,0.3)', color: 'white'}}
+                style={{background: 'rgba(255,255,255,0.22)', border: '2px solid rgba(255,255,255,0.3)', color: 'var(--card)'}}
               >
                 {otherUsers[0].full_name?.[0] || otherUsers[0].email?.[0]}
               </div>
@@ -257,7 +257,7 @@ export default function Feed() {
               <button 
                 onClick={() => navigate('/people')}
                 className="px-6 py-2 rounded-lg font-bold transition hover:scale-105"
-                style={{background: 'white', color: '#7C6AF0'}}
+                style={{background: 'var(--card)', color: 'var(--accent)'}}
               >
                 View Profile →
               </button>
@@ -269,30 +269,30 @@ export default function Feed() {
             <div 
               key={event.id}
               className="rounded-2xl p-6"
-              style={{background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5'}}
+              style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
             >
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-2 h-2 rounded-full" style={{background: '#F59E0B'}}></div>
-                <span className="text-xs font-bold uppercase tracking-wide" style={{color: '#7A788F'}}>
+                <span className="text-xs font-bold uppercase tracking-wide" style={{color: 'var(--text-muted)'}}>
                   Event · {event.category || 'General'}
                 </span>
               </div>
-              <h3 className="text-lg font-bold mb-2" style={{color: '#1A1824'}}>
+              <h3 className="text-lg font-bold mb-2" style={{color: 'var(--text)'}}>
                 {event.title}
               </h3>
-              <p className="text-sm mb-4" style={{color: '#7A788F', lineHeight: 1.6}}>
+              <p className="text-sm mb-4" style={{color: 'var(--text-muted)', lineHeight: 1.6}}>
                 {event.description}
               </p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{background: '#EDE9FF', color: '#7C6AF0'}}>
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{background: 'var(--accent-light)', color: 'var(--accent)'}}>
                     {new Date(event.event_date).toLocaleDateString()}
                   </span>
-                  <span className="text-sm" style={{color: '#7A788F'}}>{event.location}</span>
+                  <span className="text-sm" style={{color: 'var(--text-muted)'}}>{event.location}</span>
                 </div>
                 <button 
                   className="px-4 py-2 rounded-lg text-sm font-bold transition"
-                  style={{background: '#7C6AF0', color: 'white'}}
+                  style={{background: 'var(--accent)', color: 'var(--card)'}}
                 >
                   RSVP
                 </button>
@@ -308,30 +308,30 @@ export default function Feed() {
           {/* Who's Online Now */}
           <div 
             className="rounded-2xl p-5"
-            style={{background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5'}}
+            style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
           >
-            <h3 className="font-bold mb-4 flex items-center gap-2" style={{color: '#1A1824'}}>
+            <h3 className="font-bold mb-4 flex items-center gap-2" style={{color: 'var(--text)'}}>
               <span className="w-2 h-2 rounded-full bg-green-500"></span>
               Online Now ({onlineUsers.length})
             </h3>
             
             {onlineUsers.length === 0 ? (
-              <p className="text-sm text-center py-4" style={{color: '#7A788F'}}>No one else online</p>
+              <p className="text-sm text-center py-4" style={{color: 'var(--text-muted)'}}>No one else online</p>
             ) : (
               <div className="space-y-3">
                 {onlineUsers.slice(0, 5).map(p => (
                   <div key={p.id} className="flex items-center gap-3">
                     <div 
                       className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
-                      style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
+                      style={{background: 'linear-gradient(135deg, var(--accent), var(--accent2))'}}
                     >
                       {p.full_name?.[0] || p.email?.[0]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm truncate" style={{color: '#1A1824'}}>
+                      <p className="font-bold text-sm truncate" style={{color: 'var(--text)'}}>
                         {p.full_name || p.email}
                       </p>
-                      <p className="text-xs flex items-center gap-1" style={{color: '#7A788F'}}>
+                      <p className="text-xs flex items-center gap-1" style={{color: 'var(--text-muted)'}}>
                         {statusIcons[p.study_status || 'available']}
                         {p.current_location || 'Online'}
                       </p>
@@ -339,7 +339,7 @@ export default function Feed() {
                     <button 
                       onClick={() => navigate('/people')}
                       className="px-3 py-1 rounded-lg text-xs font-bold transition"
-                      style={{background: '#EDE9FF', color: '#7C6AF0'}}
+                      style={{background: 'var(--accent-light)', color: 'var(--accent)'}}
                     >
                       View
                     </button>
@@ -352,12 +352,12 @@ export default function Feed() {
           {/* Create Event Button */}
           <div 
             className="rounded-2xl p-5"
-            style={{background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5'}}
+            style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
           >
             <button 
               onClick={() => setShowEventForm(true)}
               className="w-full py-3 rounded-lg font-bold transition text-white"
-              style={{background: '#7C6AF0'}}
+              style={{background: 'var(--accent)'}}
             >
               + Create Event
             </button>
@@ -366,28 +366,28 @@ export default function Feed() {
           {/* New Students */}
           <div 
             className="rounded-2xl p-5"
-            style={{background: 'white', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #E5E5E5'}}
+            style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
           >
-            <h3 className="font-bold mb-4" style={{color: '#1A1824'}}>👥 New students</h3>
+            <h3 className="font-bold mb-4" style={{color: 'var(--text)'}}>👥 New students</h3>
             
             {otherUsers.slice(0, 3).map((p) => (
               <div key={p.id} className="flex items-center gap-3 mb-3 last:mb-0">
                 <div 
                   className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
-                  style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
+                  style={{background: 'linear-gradient(135deg, var(--accent), var(--accent2))'}}
                 >
                   {p.full_name?.[0] || p.email?.[0]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold text-sm truncate" style={{color: '#1A1824'}}>
+                  <p className="font-bold text-sm truncate" style={{color: 'var(--text)'}}>
                     {p.full_name || p.email}
                   </p>
-                  <p className="text-xs" style={{color: '#7A788F'}}>New on Univio</p>
+                  <p className="text-xs" style={{color: 'var(--text-muted)'}}>New on Univio</p>
                 </div>
                 <button 
                   onClick={() => navigate('/people')}
                   className="px-3 py-1 rounded-lg text-xs font-bold transition"
-                  style={{background: '#EDE9FF', color: '#7C6AF0'}}
+                  style={{background: 'var(--accent-light)', color: 'var(--accent)'}}
                 >
                   View
                 </button>
@@ -448,79 +448,79 @@ function EventForm({ onClose, onCreate }) {
     >
       <div 
         className="rounded-2xl p-8 max-w-md w-full mx-4"
-        style={{background: 'white'}}
+        style={{background: 'var(--card)'}}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold mb-6" style={{color: '#1A1824'}}>Create Event</h2>
+        <h2 className="text-2xl font-bold mb-6" style={{color: 'var(--text)'}}>Create Event</h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Event Title</label>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Event Title</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Description</label>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Description</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
               rows="3"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Date</label>
+              <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Date</label>
               <input
                 type="date"
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
                 className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-                style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+                style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Time</label>
+              <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Time</label>
               <input
                 type="time"
                 value={eventTime}
                 onChange={(e) => setEventTime(e.target.value)}
                 className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-                style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+                style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Location</label>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Location</label>
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
               placeholder="e.g., Library Floor 2"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>Category</label>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Category</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
             >
               <option>General</option>
               <option>Computer Science</option>
@@ -535,14 +535,14 @@ function EventForm({ onClose, onCreate }) {
               type="button"
               onClick={onClose}
               className="flex-1 py-3 rounded-lg font-bold transition"
-              style={{background: '#F3F0EA', color: '#1A1824'}}
+              style={{background: 'var(--bg2)', color: 'var(--text)'}}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="flex-1 py-3 rounded-lg font-bold transition text-white"
-              style={{background: '#7C6AF0'}}
+              style={{background: 'var(--accent)'}}
             >
               Create Event
             </button>

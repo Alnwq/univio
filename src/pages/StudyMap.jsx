@@ -61,8 +61,7 @@ function getTier(rating) {
 }
 
 function catIcon(cat) {
-  // Plain text only — emoji glyphs break inside Leaflet divIcon HTML
-  return { library: 'LIB', cafe: 'CAF', campus: 'UNI', coworking: 'CO' }[cat] || '•'
+  return { library: '📚', cafe: '☕', campus: '🏛️', coworking: '💼' }[cat] || '📍'
 }
 
 export default function StudyMap() {
@@ -152,7 +151,7 @@ export default function StudyMap() {
       const tier     = rating ? getTier(rating.overall) : null
       const icon = L.divIcon({
         className: '',
-        html: '<div style="position:relative;width:44px;height:44px"><div style="width:44px;height:44px;border-radius:50%;background:' + (tier ? tier.color : '#7C6AF0') + ';border:3px solid white;box-shadow:0 3px 14px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;cursor:pointer">' + (checkins > 0 ? checkins : catIcon(spot.category)) + '</div>' + (tier ? '<div style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:' + tier.bg + ';color:' + tier.color + ';font-size:9px;font-weight:800;border:2px solid white;display:flex;align-items:center;justify-content:center">' + tier.tier + '</div>' : '') + '</div>',
+        html: '<div style="position:relative;width:44px;height:44px"><div style="width:44px;height:44px;border-radius:50%;background:' + (tier ? tier.color : 'var(--accent)') + ';border:3px solid white;box-shadow:0 3px 14px rgba(0,0,0,0.28);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;cursor:pointer">' + (checkins > 0 ? checkins : catIcon(spot.category)) + '</div>' + (tier ? '<div style="position:absolute;top:-7px;right:-7px;width:20px;height:20px;border-radius:50%;background:' + tier.bg + ';color:' + tier.color + ';font-size:9px;font-weight:800;border:2px solid white;display:flex;align-items:center;justify-content:center">' + tier.tier + '</div>' : '') + '</div>',
         iconSize: [44, 44], iconAnchor: [22, 22],
       })
       markersRef.current[spot.id] = L.marker([spot.latitude, spot.longitude], { icon })
@@ -193,24 +192,24 @@ export default function StudyMap() {
   const hasPrefs    = userPrefs && Object.values(userPrefs).some(Boolean)
 
   return (
-    <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0, background: '#FAF8F4' }}>
+    <div className="flex flex-1 overflow-hidden" style={{ minHeight: 0, background: 'var(--bg)' }}>
       <div className="flex-1 flex flex-col overflow-hidden" style={{ minHeight: 0 }}>
         <div className="flex items-center gap-2 px-4 py-3 border-b flex-shrink-0"
-             style={{ background: 'white', borderColor: '#E5E5E5' }}>
+             style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
           {['map', 'tierlist'].map(v => (
             <button key={v} onClick={() => setActiveView(v)}
               className="px-4 py-2 rounded-lg text-sm font-semibold transition"
-              style={{ background: activeView === v ? '#7C6AF0' : '#F3F0EA', color: activeView === v ? 'white' : '#7A788F' }}>
+              style={{ background: activeView === v ? 'var(--accent)' : 'var(--bg2)', color: activeView === v ? 'white' : 'var(--text-muted)' }}>
               {v === 'map' ? '🗺️ Map View' : '🏆 Tier List'}
             </button>
           ))}
         </div>
 
-        <div style={{ flex: 1, display: activeView === 'map' ? 'block' : 'none', minHeight: 0, position: 'relative', isolation: 'isolate' }}>
-          <div ref={mapRef} style={{ width: '100%', height: '100%', minHeight: '400px', zIndex: 0 }} />
+        <div style={{ flex: 1, display: activeView === 'map' ? 'block' : 'none', minHeight: 0, position: 'relative' }}>
+          <div ref={mapRef} style={{ width: '100%', height: '100%', minHeight: '400px' }} />
           {!leafletReady && (
             <div className="absolute inset-0 flex items-center justify-center" style={{ background: '#F0EDF8' }}>
-              <div style={{ textAlign: 'center', color: '#7C6AF0' }}>
+              <div style={{ textAlign: 'center', color: 'var(--accent)' }}>
                 <div style={{ fontSize: 36, marginBottom: 8 }}>🗺️</div>
                 <p style={{ fontWeight: 600 }}>Loading map…</p>
               </div>
@@ -221,7 +220,7 @@ export default function StudyMap() {
         {activeView === 'tierlist' && (
           <div className="flex-1 overflow-y-auto p-6">
             <div className="max-w-3xl mx-auto">
-              <p className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: '#B0AFBF' }}>
+              <p className="text-xs font-bold uppercase tracking-widest mb-5" style={{ color: 'var(--text-muted)' }}>
                 Community Rankings · {Object.values(spotRatings).reduce((a, r) => a + r.count, 0)} ratings total
               </p>
               <div className="space-y-3">
@@ -238,7 +237,7 @@ export default function StudyMap() {
                          style={{ width: 70, background: 'linear-gradient(135deg,' + g1 + ',' + g2 + ')', minHeight: 80 }}>
                       <span style={{ fontSize: 30, fontWeight: 900, color, lineHeight: 1 }}>{tier}</span>
                     </div>
-                    <div className="flex-1 p-3" style={{ background: 'white' }}>
+                    <div className="flex-1 p-3" style={{ background: 'var(--card)' }}>
                       {ts.length === 0
                         ? <p className="text-sm py-4 text-center" style={{ color: '#E2E8F0' }}>No spots yet</p>
                         : <div className="flex flex-wrap gap-2 items-center py-1">
@@ -249,10 +248,10 @@ export default function StudyMap() {
                                 <button key={spot.id}
                                   onClick={() => { setSelectedSpot(spot); setActiveView('map') }}
                                   className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-semibold transition hover:shadow-md"
-                                  style={{ background: '#FAF8F4', border: '1.5px solid #E5E5E5', color: '#1A1824' }}>
+                                  style={{ background: 'var(--bg)', border: '1.5px solid var(--border)', color: 'var(--text)' }}>
                                   {catIcon(spot.category)} {spot.name}
                                   {r && <span style={{ color: '#F59E0B', fontSize: 11 }}>★{r.overall}</span>}
-                                  {c > 0 && <span style={{ color: '#7C6AF0', fontSize: 11 }}>👥{c}</span>}
+                                  {c > 0 && <span style={{ color: 'var(--accent)', fontSize: 11 }}>👥{c}</span>}
                                 </button>
                               )
                             })}
@@ -271,28 +270,28 @@ export default function StudyMap() {
         )}
       </div>
 
-      <div className="flex flex-col border-l" style={{ width: 340, background: 'white', borderColor: '#E5E5E5', minHeight: 0, overflow: 'hidden' }}>
-        <div className="flex-shrink-0 border-b" style={{ borderColor: '#E5E5E5' }}>
+      <div className="flex flex-col border-l" style={{ width: 340, background: 'var(--card)', borderColor: 'var(--border)', minHeight: 0, overflow: 'hidden' }}>
+        <div className="flex-shrink-0 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="font-bold text-sm" style={{ color: '#1A1824' }}>🎯 Best For You Right Now</p>
-                <p className="text-xs mt-0.5" style={{ color: '#B0AFBF' }}>
+                <p className="font-bold text-sm" style={{ color: 'var(--text)' }}>🎯 Best For You Right Now</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
                   {hasPrefs ? 'Live data + your preferences' : 'Set preferences for personalised picks'}
                 </p>
               </div>
               <button onClick={() => setShowPrefForm(true)}
                       className="text-xs px-3 py-1.5 rounded-lg font-semibold"
-                      style={{ background: '#EDE9FF', color: '#7C6AF0' }}>
+                      style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
                 {hasPrefs ? 'Edit' : 'Set up'}
               </button>
             </div>
             {!hasPrefs ? (
               <button onClick={() => setShowPrefForm(true)}
                       className="w-full rounded-xl p-3 text-sm text-left"
-                      style={{ background: '#FAF8F4', border: '1.5px dashed #D8D0FF' }}>
-                <span style={{ color: '#7C6AF0', fontWeight: 700 }}>+ Set your study preferences</span><br />
-                <span style={{ fontSize: 11, color: '#B0AFBF' }}>WiFi, quiet, outlets, food — we'll rank spots for you</span>
+                      style={{ background: 'var(--bg)', border: '1.5px dashed #D8D0FF' }}>
+                <span style={{ color: 'var(--accent)', fontWeight: 700 }}>+ Set your study preferences</span><br />
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>WiFi, quiet, outlets, food — we'll rank spots for you</span>
               </button>
             ) : (
               <div className="space-y-2">
@@ -305,19 +304,19 @@ export default function StudyMap() {
                     <button key={spot.id}
                       onClick={() => { setSelectedSpot(spot); setActiveView('map') }}
                       className="w-full text-left rounded-xl p-3 transition hover:shadow-md"
-                      style={{ background: i === 0 ? '#FFFBEB' : '#FAF8F4', border: '1.5px solid ' + (i === 0 ? '#FDE68A' : '#E5E5E5') }}>
+                      style={{ background: i === 0 ? '#FFFBEB' : 'var(--bg)', border: '1.5px solid ' + (i === 0 ? '#FDE68A' : 'var(--border)') }}>
                       <div className="flex items-center justify-between mb-1">
                         <div className="flex items-center gap-2">
                           <span style={{ fontSize: 16 }}>{medals[i]}</span>
-                          <span className="font-bold text-sm" style={{ color: '#1A1824' }}>{spot.name}</span>
+                          <span className="font-bold text-sm" style={{ color: 'var(--text)' }}>{spot.name}</span>
                         </div>
                         <div className="flex gap-1 flex-shrink-0 ml-1">
                           {tier && <span className="text-xs font-bold px-1.5 py-0.5 rounded-full" style={{ background: tier.bg, color: tier.color }}>{tier.tier}</span>}
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: '#EDE9FF', color: '#7C6AF0' }}>{score}%</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>{score}%</span>
                         </div>
                       </div>
-                      {reasons.length > 0 && <p className="text-xs" style={{ color: '#7A788F' }}>{reasons.slice(0, 2).join(' · ')}</p>}
-                      {checkins > 0 && <p className="text-xs mt-1 font-semibold" style={{ color: '#7C6AF0' }}>👥 {checkins} here now</p>}
+                      {reasons.length > 0 && <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{reasons.slice(0, 2).join(' · ')}</p>}
+                      {checkins > 0 && <p className="text-xs mt-1 font-semibold" style={{ color: 'var(--accent)' }}>👥 {checkins} here now</p>}
                     </button>
                   )
                 })}
@@ -326,11 +325,11 @@ export default function StudyMap() {
           </div>
         </div>
 
-        <div className="px-4 py-3 border-b flex-shrink-0" style={{ borderColor: '#E5E5E5' }}>
+        <div className="px-4 py-3 border-b flex-shrink-0" style={{ borderColor: 'var(--border)' }}>
           <div className="flex gap-2">
             <select value={filterCategory} onChange={e => setFilterCategory(e.target.value)}
                     className="flex-1 rounded-lg px-2 py-2 text-xs outline-none"
-                    style={{ background: '#FAF8F4', border: '1.5px solid #E5E5E5' }}>
+                    style={{ background: 'var(--bg)', border: '1.5px solid var(--border)' }}>
               <option value="all">All types</option>
               <option value="library">📚 Library</option>
               <option value="cafe">☕ Café</option>
@@ -339,7 +338,7 @@ export default function StudyMap() {
             </select>
             <select value={filterAmenity} onChange={e => setFilterAmenity(e.target.value)}
                     className="flex-1 rounded-lg px-2 py-2 text-xs outline-none"
-                    style={{ background: '#FAF8F4', border: '1.5px solid #E5E5E5' }}>
+                    style={{ background: 'var(--bg)', border: '1.5px solid var(--border)' }}>
               <option value="all">All amenities</option>
               <option value="wifi">📶 WiFi</option>
               <option value="outlets">🔌 Outlets</option>
@@ -353,7 +352,7 @@ export default function StudyMap() {
           {sorted.length === 0 && (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <span style={{ fontSize: 36 }}>📍</span>
-              <p className="font-bold mt-3 text-sm" style={{ color: '#7A788F' }}>No spots match</p>
+              <p className="font-bold mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>No spots match</p>
             </div>
           )}
           {sorted.map(spot => {
@@ -365,21 +364,21 @@ export default function StudyMap() {
               <button key={spot.id}
                 onClick={() => { setSelectedSpot(spot); if (activeView === 'tierlist') setActiveView('map') }}
                 className="w-full text-left rounded-xl p-3 transition"
-                style={{ background: isSelected ? '#EDE9FF' : '#FAF8F4', border: '1.5px solid ' + (isSelected ? '#7C6AF0' : '#E5E5E5') }}>
+                style={{ background: isSelected ? 'var(--accent-light)' : 'var(--bg)', border: '1.5px solid ' + (isSelected ? 'var(--accent)' : 'var(--border)') }}>
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0 pr-2">
                     <div className="flex items-center gap-1.5 mb-0.5">
                       <span style={{ fontSize: 13 }}>{catIcon(spot.category)}</span>
-                      <span className="font-bold text-sm truncate" style={{ color: '#1A1824' }}>{spot.name}</span>
+                      <span className="font-bold text-sm truncate" style={{ color: 'var(--text)' }}>{spot.name}</span>
                     </div>
-                    <p className="text-xs truncate" style={{ color: '#B0AFBF' }}>{spot.address}</p>
+                    <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>{spot.address}</p>
                   </div>
                   {tier
                     ? <span className="text-xs font-bold px-1.5 py-0.5 rounded-full flex-shrink-0" style={{ background: tier.bg, color: tier.color }}>{tier.tier} {rating.overall}★</span>
                     : <span className="text-xs px-1.5 py-0.5 rounded-full flex-shrink-0" style={{ background: '#F1F5F9', color: '#CBD5E1' }}>unrated</span>
                   }
                 </div>
-                {checkins.length > 0 && <p className="text-xs mt-1.5 font-semibold" style={{ color: '#7C6AF0' }}>👥 {checkins.length} here now</p>}
+                {checkins.length > 0 && <p className="text-xs mt-1.5 font-semibold" style={{ color: 'var(--accent)' }}>👥 {checkins.length} here now</p>}
               </button>
             )
           })}
@@ -425,34 +424,34 @@ function PreferencesModal({ user, currentPrefs, onClose, onSave }) {
     { key: 'food',    icon: '☕', label: 'Food & Drinks',     desc: 'Coffee or snacks nearby' },
   ]
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4"
-         style={{ background: 'rgba(0,0,0,0.5)', zIndex: 9999 }} onClick={onClose}>
-      <div className="rounded-2xl p-8 max-w-md w-full" style={{ background: 'white' }}
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4"
+         style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="rounded-2xl p-8 max-w-md w-full" style={{ background: 'var(--card)' }}
            onClick={e => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold mb-1" style={{ color: '#1A1824' }}>Study Preferences</h2>
-        <p className="text-sm mb-6" style={{ color: '#7A788F' }}>
+        <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>Study Preferences</h2>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>
           We combine your preferences with live check-in data to rank spots for you right now.
         </p>
         <div className="space-y-3 mb-6">
           {options.map(({ key, icon, label, desc }) => (
             <button key={key} onClick={() => toggle(key)}
                     className="w-full flex items-center gap-4 p-4 rounded-xl text-left transition"
-                    style={{ background: prefs[key] ? '#EDE9FF' : '#FAF8F4', border: '2px solid ' + (prefs[key] ? '#7C6AF0' : '#E5E5E5') }}>
+                    style={{ background: prefs[key] ? 'var(--accent-light)' : 'var(--bg)', border: '2px solid ' + (prefs[key] ? 'var(--accent)' : 'var(--border)') }}>
               <span style={{ fontSize: 24 }}>{icon}</span>
               <div className="flex-1">
-                <p className="font-bold text-sm" style={{ color: '#1A1824' }}>{label}</p>
-                <p className="text-xs" style={{ color: '#7A788F' }}>{desc}</p>
+                <p className="font-bold text-sm" style={{ color: 'var(--text)' }}>{label}</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{desc}</p>
               </div>
               <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0"
-                   style={{ background: prefs[key] ? '#7C6AF0' : '#E5E5E5' }}>
-                {prefs[key] && <span style={{ color: 'white', fontSize: 14 }}>✓</span>}
+                   style={{ background: prefs[key] ? 'var(--accent)' : 'var(--border)' }}>
+                {prefs[key] && <span style={{ color: 'var(--card)', fontSize: 14 }}>✓</span>}
               </div>
             </button>
           ))}
         </div>
         <div className="flex gap-3">
-          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#F3F0EA', color: '#1A1824' }}>Cancel</button>
-          <button onClick={save} className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: '#7C6AF0' }}>Save Preferences</button>
+          <button onClick={onClose} className="flex-1 py-3 rounded-xl font-bold" style={{ background: 'var(--bg2)', color: 'var(--text)' }}>Cancel</button>
+          <button onClick={save} className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: 'var(--accent)' }}>Save Preferences</button>
         </div>
       </div>
     </div>
@@ -464,27 +463,27 @@ function SpotDetailModal({ spot, rating, checkins, profiles, user, onClose, onCh
   const isCheckedIn = checkins.some(c => c.user_id === user?.id)
   const tier        = rating ? getTier(rating.overall) : null
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4"
-         style={{ background: 'rgba(0,0,0,0.5)', zIndex: 9999 }} onClick={onClose}>
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4"
+         style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
       <div className="rounded-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
-           style={{ background: 'white' }} onClick={e => e.stopPropagation()}>
-        <div className="p-6 border-b" style={{ borderColor: '#E5E5E5' }}>
+           style={{ background: 'var(--card)' }} onClick={e => e.stopPropagation()}>
+        <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
           <div className="flex items-start justify-between mb-3">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <h2 className="text-2xl font-bold" style={{ color: '#1A1824' }}>{spot.name}</h2>
+                <h2 className="text-2xl font-bold" style={{ color: 'var(--text)' }}>{spot.name}</h2>
                 {tier && <span className="px-2 py-1 rounded-lg text-sm font-bold" style={{ background: tier.bg, color: tier.color }}>{tier.label}</span>}
               </div>
-              <p className="text-sm" style={{ color: '#7A788F' }}>{spot.address}</p>
-              {spot.description && <p className="text-sm mt-2" style={{ color: '#7A788F' }}>{spot.description}</p>}
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{spot.address}</p>
+              {spot.description && <p className="text-sm mt-2" style={{ color: 'var(--text-muted)' }}>{spot.description}</p>}
             </div>
-            <button onClick={onClose} className="text-2xl ml-4" style={{ color: '#B0AFBF' }}>×</button>
+            <button onClick={onClose} className="text-2xl ml-4" style={{ color: 'var(--text-muted)' }}>×</button>
           </div>
           {rating ? (
             <div className="flex items-center gap-6 mt-4">
               <div className="text-center">
                 <div className="text-4xl font-bold" style={{ color: '#F59E0B' }}>{rating.overall}</div>
-                <div className="text-xs mt-1" style={{ color: '#7A788F' }}>{rating.count} reviews</div>
+                <div className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>{rating.count} reviews</div>
               </div>
               <div className="flex-1 space-y-1.5">
                 <RatingBar label="WiFi"    value={rating.wifi} />
@@ -494,13 +493,13 @@ function SpotDetailModal({ spot, rating, checkins, profiles, user, onClose, onCh
               </div>
             </div>
           ) : (
-            <div className="mt-3 px-4 py-3 rounded-xl text-sm" style={{ background: '#FAF8F4', color: '#7A788F' }}>
+            <div className="mt-3 px-4 py-3 rounded-xl text-sm" style={{ background: 'var(--bg)', color: 'var(--text-muted)' }}>
               No ratings yet — be the first to review!
             </div>
           )}
         </div>
-        <div className="p-6 border-b" style={{ borderColor: '#E5E5E5' }}>
-          <h3 className="font-bold mb-3" style={{ color: '#1A1824' }}>Amenities</h3>
+        <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
+          <h3 className="font-bold mb-3" style={{ color: 'var(--text)' }}>Amenities</h3>
           <div className="flex flex-wrap gap-2">
             {amenities.wifi    && <Badge icon="📶" label="WiFi" />}
             {amenities.outlets && <Badge icon="🔌" label="Power Outlets" />}
@@ -508,22 +507,22 @@ function SpotDetailModal({ spot, rating, checkins, profiles, user, onClose, onCh
             {amenities.quiet   && <Badge icon="🔇" label="Quiet" />}
           </div>
         </div>
-        <div className="p-6 border-b" style={{ borderColor: '#E5E5E5' }}>
-          <h3 className="font-bold mb-3" style={{ color: '#1A1824' }}>Who's Here ({checkins.length})</h3>
+        <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
+          <h3 className="font-bold mb-3" style={{ color: 'var(--text)' }}>Who's Here ({checkins.length})</h3>
           {checkins.length === 0
-            ? <p className="text-sm text-center py-3" style={{ color: '#B0AFBF' }}>No one yet — be first! 🎉</p>
+            ? <p className="text-sm text-center py-3" style={{ color: 'var(--text-muted)' }}>No one yet — be first! 🎉</p>
             : <div className="space-y-2">
                 {checkins.map(c => {
                   const p = profiles[c.user_id]
                   return (
                     <div key={c.id} className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-lg flex items-center justify-center font-bold text-white text-sm"
-                           style={{ background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)' }}>
+                           style={{ background: 'linear-gradient(135deg, var(--accent), var(--accent2))' }}>
                         {p?.full_name?.[0] || '?'}
                       </div>
                       <div>
-                        <p className="font-bold text-sm" style={{ color: '#1A1824' }}>{p?.full_name || p?.email}</p>
-                        <p className="text-xs" style={{ color: '#7A788F' }}>
+                        <p className="font-bold text-sm" style={{ color: 'var(--text)' }}>{p?.full_name || p?.email}</p>
+                        <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                           {c.status === 'available' && '🟢 Available'}
                           {c.status === 'busy' && '🟡 Busy'}
                           {c.status === 'deep_work' && '🔴 Deep work'}
@@ -536,16 +535,16 @@ function SpotDetailModal({ spot, rating, checkins, profiles, user, onClose, onCh
           }
         </div>
         {rating?.reviews?.filter(r => r.review_text).length > 0 && (
-          <div className="p-6 border-b" style={{ borderColor: '#E5E5E5' }}>
-            <h3 className="font-bold mb-3" style={{ color: '#1A1824' }}>Reviews</h3>
+          <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
+            <h3 className="font-bold mb-3" style={{ color: 'var(--text)' }}>Reviews</h3>
             <div className="space-y-3">
               {rating.reviews.filter(r => r.review_text).slice(0, 3).map(r => (
                 <div key={r.id}>
                   <div className="flex items-center gap-2 mb-1">
-                    <p className="font-bold text-sm" style={{ color: '#1A1824' }}>{profiles[r.user_id]?.full_name || 'Anonymous'}</p>
+                    <p className="font-bold text-sm" style={{ color: 'var(--text)' }}>{profiles[r.user_id]?.full_name || 'Anonymous'}</p>
                     <span className="text-xs" style={{ color: '#F59E0B' }}>★ {r.overall_rating}</span>
                   </div>
-                  <p className="text-sm" style={{ color: '#7A788F' }}>{r.review_text}</p>
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>{r.review_text}</p>
                 </div>
               ))}
             </div>
@@ -553,10 +552,10 @@ function SpotDetailModal({ spot, rating, checkins, profiles, user, onClose, onCh
         )}
         <div className="p-6 flex gap-3">
           {isCheckedIn
-            ? <button onClick={() => { onCheckOut(); onClose() }} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#F3F0EA', color: '#1A1824' }}>Check Out</button>
-            : <button onClick={() => { onCheckIn(spot.id); onClose() }} className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: '#7C6AF0' }}>📍 Check In Here</button>
+            ? <button onClick={() => { onCheckOut(); onClose() }} className="flex-1 py-3 rounded-xl font-bold" style={{ background: 'var(--bg2)', color: 'var(--text)' }}>Check Out</button>
+            : <button onClick={() => { onCheckIn(spot.id); onClose() }} className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: 'var(--accent)' }}>📍 Check In Here</button>
           }
-          <button onClick={onRate} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#EDE9FF', color: '#7C6AF0' }}>⭐ Rate This Spot</button>
+          <button onClick={onRate} className="flex-1 py-3 rounded-xl font-bold" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>⭐ Rate This Spot</button>
         </div>
       </div>
     </div>
@@ -580,12 +579,12 @@ function RatingFormModal({ spot, user, onClose, onSubmit }) {
     onSubmit()
   }
   return (
-    <div className="fixed inset-0 flex items-center justify-center p-4"
-         style={{ background: 'rgba(0,0,0,0.5)', zIndex: 9999 }} onClick={onClose}>
-      <div className="rounded-2xl p-8 max-w-md w-full" style={{ background: 'white' }}
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4"
+         style={{ background: 'rgba(0,0,0,0.5)' }} onClick={onClose}>
+      <div className="rounded-2xl p-8 max-w-md w-full" style={{ background: 'var(--card)' }}
            onClick={e => e.stopPropagation()}>
-        <h2 className="text-2xl font-bold mb-1" style={{ color: '#1A1824' }}>Rate {spot.name}</h2>
-        <p className="text-sm mb-6" style={{ color: '#7A788F' }}>Help other students find great spots</p>
+        <h2 className="text-2xl font-bold mb-1" style={{ color: 'var(--text)' }}>Rate {spot.name}</h2>
+        <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Help other students find great spots</p>
         <form onSubmit={submit} className="space-y-4">
           <StarRating label="Overall Rating"            value={overall} onChange={setOverall} />
           <StarRating label="WiFi Quality"              value={wifi}    onChange={setWifi} />
@@ -593,15 +592,15 @@ function RatingFormModal({ spot, user, onClose, onSubmit }) {
           <StarRating label="Power Outlets"             value={outlets} onChange={setOutlets} />
           <StarRating label="Comfort"                   value={comfort} onChange={setComfort} />
           <div>
-            <label className="block text-sm font-bold mb-2" style={{ color: '#1A1824' }}>Review (optional)</label>
+            <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text)' }}>Review (optional)</label>
             <textarea value={review} onChange={e => setReview(e.target.value)} rows="3"
                       placeholder="Share your experience…"
                       className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-                      style={{ background: '#FAF8F4', border: '1.5px solid #E5E5E5' }} />
+                      style={{ background: 'var(--bg)', border: '1.5px solid var(--border)' }} />
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl font-bold" style={{ background: '#F3F0EA', color: '#1A1824' }}>Cancel</button>
-            <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: '#7C6AF0' }}>Submit Rating</button>
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl font-bold" style={{ background: 'var(--bg2)', color: 'var(--text)' }}>Cancel</button>
+            <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white" style={{ background: 'var(--accent)' }}>Submit Rating</button>
           </div>
         </form>
       </div>
@@ -612,12 +611,12 @@ function RatingFormModal({ spot, user, onClose, onSubmit }) {
 function StarRating({ label, value, onChange }) {
   return (
     <div>
-      <label className="block text-sm font-bold mb-2" style={{ color: '#1A1824' }}>{label}</label>
+      <label className="block text-sm font-bold mb-2" style={{ color: 'var(--text)' }}>{label}</label>
       <div className="flex gap-2">
         {[1,2,3,4,5].map(s => (
           <button key={s} type="button" onClick={() => onChange(s)}
                   className="text-2xl transition hover:scale-110"
-                  style={{ color: s <= value ? '#F59E0B' : '#E5E5E5' }}>★</button>
+                  style={{ color: s <= value ? '#F59E0B' : 'var(--border)' }}>★</button>
         ))}
       </div>
     </div>
@@ -627,18 +626,18 @@ function StarRating({ label, value, onChange }) {
 function RatingBar({ label, value }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs w-14 flex-shrink-0" style={{ color: '#7A788F' }}>{label}</span>
-      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: '#E5E5E5' }}>
-        <div className="h-full rounded-full" style={{ background: '#7C6AF0', width: (parseFloat(value)/5*100) + '%' }} />
+      <span className="text-xs w-14 flex-shrink-0" style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--border)' }}>
+        <div className="h-full rounded-full" style={{ background: 'var(--accent)', width: (parseFloat(value)/5*100) + '%' }} />
       </div>
-      <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={{ color: '#7C6AF0' }}>{value}</span>
+      <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={{ color: 'var(--accent)' }}>{value}</span>
     </div>
   )
 }
 
 function Badge({ icon, label }) {
   return (
-    <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ background: '#EDE9FF', color: '#7C6AF0' }}>
+    <span className="px-3 py-1 rounded-full text-xs font-semibold" style={{ background: 'var(--accent-light)', color: 'var(--accent)' }}>
       {icon} {label}
     </span>
   )

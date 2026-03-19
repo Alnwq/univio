@@ -102,7 +102,7 @@ export default function CourseDetail() {
       {/* Course Header */}
       <div 
         className="p-6 border-b"
-        style={{background: 'linear-gradient(135deg, #7C6AF0 0%, #9B88F8 100%)', borderColor: '#E5E5E5'}}
+        style={{background: 'linear-gradient(135deg, #7B5EA7 0%, #9B7FCC 100%)', borderColor: 'var(--border)'}}
       >
         <button
           onClick={() => navigate('/courses')}
@@ -125,20 +125,20 @@ export default function CourseDetail() {
       <div className="flex-1 overflow-hidden grid grid-cols-1 lg:grid-cols-3 gap-0">
         
         {/* Left: Study Group Chat */}
-        <div className="lg:col-span-2 flex flex-col border-r" style={{borderColor: '#E5E5E5'}}>
-          <div className="p-4 border-b" style={{background: 'white', borderColor: '#E5E5E5'}}>
-            <h2 className="font-bold" style={{color: '#1A1824'}}>
+        <div className="lg:col-span-2 flex flex-col border-r" style={{borderColor: 'var(--border)'}}>
+          <div className="p-4 border-b" style={{background: 'var(--card)', borderColor: 'var(--border)'}}>
+            <h2 className="font-bold" style={{color: 'var(--text)'}}>
               💬 Study Group Chat
             </h2>
-            <p className="text-xs" style={{color: '#7A788F'}}>
+            <p className="text-xs" style={{color: 'var(--text-muted)'}}>
               Discuss assignments, share resources, plan study sessions
             </p>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4" style={{background: '#FAF8F4'}}>
+          <div className="flex-1 overflow-y-auto p-4" style={{background: 'var(--bg)'}}>
             {messages.length === 0 ? (
-              <div className="text-center py-12" style={{color: '#7A788F'}}>
+              <div className="text-center py-12" style={{color: 'var(--text-muted)'}}>
                 <p className="text-lg font-bold mb-2">No messages yet</p>
                 <p className="text-sm">Be the first to start the conversation!</p>
               </div>
@@ -151,24 +151,24 @@ export default function CourseDetail() {
                     <div key={msg.id} className={`flex gap-3 ${isOwn ? 'flex-row-reverse' : ''}`}>
                       <div 
                         className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white shrink-0"
-                        style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
+                        style={{background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)'}}
                       >
                         {sender?.full_name?.[0] || sender?.email?.[0] || '?'}
                       </div>
                       <div className={`max-w-md ${isOwn ? 'items-end' : 'items-start'} flex flex-col`}>
-                        <span className="text-xs mb-1" style={{color: '#B0AFBF'}}>
+                        <span className="text-xs mb-1" style={{color: 'var(--text-muted)'}}>
                           {sender?.full_name || sender?.email}
                         </span>
                         <div 
                           className="px-4 py-2 rounded-2xl text-sm"
                           style={{
-                            background: isOwn ? '#7C6AF0' : 'white',
-                            color: isOwn ? 'white' : '#1A1824'
+                            background: isOwn ? 'var(--accent)' : 'var(--card)',
+                            color: isOwn ? 'var(--card)' : 'var(--text)'
                           }}
                         >
                           {msg.content}
                         </div>
-                        <span className="text-xs mt-1" style={{color: '#B0AFBF'}}>
+                        <span className="text-xs mt-1" style={{color: 'var(--text-muted)'}}>
                           {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                       </div>
@@ -184,7 +184,7 @@ export default function CourseDetail() {
           <form 
             onSubmit={sendMessage}
             className="p-4 border-t flex gap-3"
-            style={{background: 'white', borderColor: '#E5E5E5'}}
+            style={{background: 'var(--card)', borderColor: 'var(--border)'}}
           >
             <input
               type="text"
@@ -192,12 +192,12 @@ export default function CourseDetail() {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Message your classmates..."
               className="flex-1 rounded-xl px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
             />
             <button
               type="submit"
               className="px-6 py-3 rounded-xl font-bold text-white"
-              style={{background: '#7C6AF0'}}
+              style={{background: 'var(--accent)'}}
             >
               Send
             </button>
@@ -205,11 +205,11 @@ export default function CourseDetail() {
         </div>
 
         {/* Right: Classmates & Events */}
-        <div className="flex flex-col overflow-y-auto" style={{background: 'white'}}>
+        <div className="flex flex-col overflow-y-auto" style={{background: 'var(--card)'}}>
           
           {/* Classmates */}
-          <div className="p-4 border-b" style={{borderColor: '#E5E5E5'}}>
-            <h3 className="font-bold mb-3" style={{color: '#1A1824'}}>
+          <div className="p-4 border-b" style={{borderColor: 'var(--border)'}}>
+            <h3 className="font-bold mb-3" style={{color: 'var(--text)'}}>
               👥 Classmates ({classmates.length})
             </h3>
             <div className="space-y-2">
@@ -217,15 +217,15 @@ export default function CourseDetail() {
                 <div key={classmate.id} className="flex items-center gap-3">
                   <div 
                     className="w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white shrink-0"
-                    style={{background: 'linear-gradient(135deg, #7C6AF0, #9B88F8)'}}
+                    style={{background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)'}}
                   >
                     {classmate.full_name?.[0] || classmate.email?.[0]}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-sm truncate" style={{color: '#1A1824'}}>
+                    <p className="font-bold text-sm truncate" style={{color: 'var(--text)'}}>
                       {classmate.full_name || classmate.email}
                     </p>
-                    <p className="text-xs truncate" style={{color: '#7A788F'}}>
+                    <p className="text-xs truncate" style={{color: 'var(--text-muted)'}}>
                       {classmate.major || 'Student'}
                     </p>
                   </div>
@@ -235,7 +235,7 @@ export default function CourseDetail() {
                 <button 
                   onClick={() => navigate('/people')}
                   className="text-sm font-bold w-full text-left"
-                  style={{color: '#7C6AF0'}}
+                  style={{color: 'var(--accent)'}}
                 >
                   View all {classmates.length} students →
                 </button>
@@ -245,11 +245,11 @@ export default function CourseDetail() {
 
           {/* Events */}
           <div className="p-4">
-            <h3 className="font-bold mb-3" style={{color: '#1A1824'}}>
+            <h3 className="font-bold mb-3" style={{color: 'var(--text)'}}>
               📅 Upcoming Events
             </h3>
             {events.length === 0 ? (
-              <p className="text-sm text-center py-4" style={{color: '#7A788F'}}>
+              <p className="text-sm text-center py-4" style={{color: 'var(--text-muted)'}}>
                 No events yet
               </p>
             ) : (
@@ -260,17 +260,17 @@ export default function CourseDetail() {
                     <div 
                       key={event.id}
                       className="p-3 rounded-lg"
-                      style={{background: '#FAF8F4'}}
+                      style={{background: 'var(--bg)'}}
                     >
-                      <p className="font-bold text-sm mb-1" style={{color: '#1A1824'}}>
+                      <p className="font-bold text-sm mb-1" style={{color: 'var(--text)'}}>
                         {event.title}
                       </p>
-                      <p className="text-xs mb-2" style={{color: '#7A788F'}}>
+                      <p className="text-xs mb-2" style={{color: 'var(--text-muted)'}}>
                         {date.toLocaleDateString()} · {event.location}
                       </p>
                       <button 
                         className="text-xs font-bold"
-                        style={{color: '#7C6AF0'}}
+                        style={{color: 'var(--accent)'}}
                       >
                         RSVP →
                       </button>

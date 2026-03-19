@@ -107,10 +107,10 @@ export default function Courses() {
         
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2" style={{color: '#1A1824'}}>
+          <h1 className="text-3xl font-bold mb-2" style={{color: 'var(--text)'}}>
             My Courses
           </h1>
-          <p style={{color: '#7A788F'}}>
+          <p style={{color: 'var(--text-muted)'}}>
             Your enrolled courses - the center of your university network
           </p>
         </div>
@@ -126,7 +126,7 @@ export default function Courses() {
                   onClick={() => goToCourseDetail(course.course_code)}
                   className="rounded-2xl p-6 cursor-pointer transition hover:scale-[1.02]"
                   style={{
-                    background: 'linear-gradient(135deg, #7C6AF0 0%, #9B88F8 100%)',
+                    background: 'linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%)',
                     boxShadow: '0 4px 16px rgba(124,106,240,0.3)'
                   }}
                 >
@@ -173,19 +173,19 @@ export default function Courses() {
         ) : (
           <div 
             className="rounded-2xl p-12 text-center mb-8"
-            style={{background: 'white', border: '1px solid #E5E5E5'}}
+            style={{background: 'var(--card)', border: '1px solid var(--border)'}}
           >
             <div className="text-6xl mb-4">📚</div>
-            <h3 className="text-xl font-bold mb-2" style={{color: '#1A1824'}}>
+            <h3 className="text-xl font-bold mb-2" style={{color: 'var(--text)'}}>
               No courses yet
             </h3>
-            <p className="mb-6" style={{color: '#7A788F'}}>
+            <p className="mb-6" style={{color: 'var(--text-muted)'}}>
               Add your courses to connect with classmates and join study groups
             </p>
             <button
               onClick={() => setShowAddCourse(true)}
               className="px-6 py-3 rounded-lg font-bold text-white"
-              style={{background: '#7C6AF0'}}
+              style={{background: 'var(--accent)'}}
             >
               + Add Your First Course
             </button>
@@ -196,13 +196,13 @@ export default function Courses() {
         {myCourses.length > 0 && (
           <>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold" style={{color: '#1A1824'}}>
+              <h2 className="text-xl font-bold" style={{color: 'var(--text)'}}>
                 Available Courses
               </h2>
               <button
                 onClick={() => setShowAddCourse(true)}
                 className="px-4 py-2 rounded-lg font-bold transition"
-                style={{background: '#EDE9FF', color: '#7C6AF0'}}
+                style={{background: 'var(--accent-light)', color: 'var(--accent)'}}
               >
                 + Add Course
               </button>
@@ -215,16 +215,16 @@ export default function Courses() {
                   <div
                     key={course.id}
                     className="rounded-2xl p-6"
-                    style={{background: 'white', border: '1px solid #E5E5E5'}}
+                    style={{background: 'var(--card)', border: '1px solid var(--border)'}}
                   >
-                    <div className="text-xs font-bold uppercase tracking-wide mb-2" style={{color: '#7C6AF0'}}>
+                    <div className="text-xs font-bold uppercase tracking-wide mb-2" style={{color: 'var(--accent)'}}>
                       {course.course_code}
                     </div>
-                    <h3 className="text-lg font-bold mb-3" style={{color: '#1A1824'}}>
+                    <h3 className="text-lg font-bold mb-3" style={{color: 'var(--text)'}}>
                       {course.course_name}
                     </h3>
 
-                    <div className="flex items-center gap-4 mb-4" style={{color: '#7A788F'}}>
+                    <div className="flex items-center gap-4 mb-4" style={{color: 'var(--text-muted)'}}>
                       <div className="text-sm">
                         <strong>{stats.students}</strong> students
                       </div>
@@ -236,7 +236,7 @@ export default function Courses() {
                     <button
                       onClick={() => enrollInCourse(course.course_code)}
                       className="w-full py-2 rounded-lg font-bold transition"
-                      style={{background: '#EDE9FF', color: '#7C6AF0'}}
+                      style={{background: 'var(--accent-light)', color: 'var(--accent)'}}
                     >
                       Enroll
                     </button>
@@ -293,16 +293,16 @@ function AddCourseModal({ onClose, onAdd }) {
     >
       <div 
         className="rounded-2xl p-8 max-w-md w-full mx-4"
-        style={{background: 'white'}}
+        style={{background: 'var(--card)'}}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold mb-6" style={{color: '#1A1824'}}>
+        <h2 className="text-2xl font-bold mb-6" style={{color: 'var(--text)'}}>
           Add Course
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>
               Course Code
             </label>
             <input
@@ -311,12 +311,12 @@ function AddCourseModal({ onClose, onAdd }) {
               onChange={(e) => setCourseCode(e.target.value)}
               placeholder="e.g., CS301"
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm uppercase"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold mb-2" style={{color: '#1A1824'}}>
+            <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>
               Course Name
             </label>
             <input
@@ -325,7 +325,7 @@ function AddCourseModal({ onClose, onAdd }) {
               onChange={(e) => setCourseName(e.target.value)}
               placeholder="e.g., Data Structures & Algorithms"
               className="w-full rounded-lg px-4 py-3 outline-none border text-sm"
-              style={{background: '#FAF8F4', border: '1.5px solid #E5E5E5'}}
+              style={{background: 'var(--bg)', border: '1.5px solid var(--border)'}}
             />
           </div>
 
@@ -333,7 +333,7 @@ function AddCourseModal({ onClose, onAdd }) {
             <button
               onClick={onClose}
               className="flex-1 py-3 rounded-lg font-bold"
-              style={{background: '#F3F0EA', color: '#1A1824'}}
+              style={{background: 'var(--bg2)', color: 'var(--text)'}}
             >
               Cancel
             </button>
@@ -341,7 +341,7 @@ function AddCourseModal({ onClose, onAdd }) {
               onClick={createAndEnroll}
               disabled={!courseCode || !courseName}
               className="flex-1 py-3 rounded-lg font-bold text-white disabled:opacity-50"
-              style={{background: '#7C6AF0'}}
+              style={{background: 'var(--accent)'}}
             >
               Add Course
             </button>
