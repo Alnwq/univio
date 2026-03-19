@@ -18,9 +18,13 @@ export default function Chat() {
   const navigate        = useNavigate()
 
   useEffect(() => {
+    let msgInterval, presenceInterval, onlineInterval
+    let currentUserId = null
+
     const init = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) return navigate('/')
+      currentUserId = user.id
       setUser(user)
 
       const { data: prof } = await supabase.from('profiles').select('*').eq('id', user.id).single()
@@ -29,26 +33,28 @@ export default function Chat() {
       const { data: all } = await supabase.from('profiles').select('*')
       const pm = {}; all?.forEach(p => (pm[p.id] = p)); setProfiles(pm)
 
-      // Set presence immediately
       await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', user.id)
 
       loadMessages(GENERAL_ROOM_ID)
       loadDMRooms(user.id)
       checkOnline()
 
-      const msgInterval      = setInterval(() => loadMessages(activeRoomIdRef.current), 2000)
-      const presenceInterval = setInterval(async () => {
-        await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', user.id)
+      msgInterval      = setInterval(() => loadMessages(activeRoomIdRef.current), 2000)
+      presenceInterval = setInterval(async () => {
+        if (currentUserId) {
+          await supabase.from('profiles').update({ last_seen: new Date().toISOString() }).eq('id', currentUserId)
+        }
       }, 10000)
-      const onlineInterval = setInterval(checkOnline, 10000)
-
-      return () => {
-        clearInterval(msgInterval)
-        clearInterval(presenceInterval)
-        clearInterval(onlineInterval)
-      }
+      onlineInterval   = setInterval(checkOnline, 10000)
     }
+
     init()
+
+    return () => {
+      clearInterval(msgInterval)
+      clearInterval(presenceInterval)
+      clearInterval(onlineInterval)
+    }
   }, [])
 
   useEffect(() => {
