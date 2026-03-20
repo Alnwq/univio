@@ -43,7 +43,7 @@ export default function CourseDetail() {
 
       // Load messages for this course
       const { data: msgs } = await supabase
-        .from('messages')
+        .from('course_messages')
         .select('*')
         .eq('course_code', courseCode)
         .order('created_at', { ascending: true })
@@ -60,14 +60,11 @@ export default function CourseDetail() {
       // Poll for new messages
       const pollInterval = setInterval(async () => {
         const { data: newMsgs } = await supabase
-          .from('messages')
+          .from('course_messages')
           .select('*')
           .eq('course_code', courseCode)
           .order('created_at', { ascending: true })
-        
-        if (newMsgs && newMsgs.length > messages.length) {
-          setMessages(newMsgs)
-        }
+        if (newMsgs) setMessages(newMsgs)
       }, 2000)
 
       return () => clearInterval(pollInterval)
@@ -84,14 +81,20 @@ export default function CourseDetail() {
     e.preventDefault()
     if (!newMessage.trim()) return
 
-    await supabase.from('messages').insert({
-      room_id: courseCode, // Using course code as room
+    await supabase.from('course_messages').insert({
       user_id: user.id,
       content: newMessage.trim(),
       course_code: courseCode
     })
 
     setNewMessage('')
+    // Reload messages
+    const { data } = await supabase
+      .from('course_messages')
+      .select('*')
+      .eq('course_code', courseCode)
+      .order('created_at', { ascending: true })
+    if (data) setMessages(data)
   }
 
   const profilesMap = {}

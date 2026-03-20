@@ -12,7 +12,8 @@ export default function Profile() {
     year: '',
     about: '',
     courses: [],
-    interests: []
+    interests: [],
+    study_status: 'available'
   })
   const navigate = useNavigate()
 
@@ -36,7 +37,8 @@ export default function Profile() {
         year: profile?.year || '',
         about: profile?.about || '',
         courses: profile?.courses || [],
-        interests: profile?.interests || []
+        interests: profile?.interests || [],
+        study_status: profile?.study_status || 'available'
       })
     }
     init()
@@ -138,6 +140,28 @@ export default function Profile() {
               </div>
 
               <div>
+                <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>Status</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { value: 'available', label: '🌱 Open to meet', color: '#22C55E' },
+                    { value: 'studying',  label: '📚 Studying',     color: '#F59E0B' },
+                    { value: 'busy',      label: '🔴 Busy',         color: '#EF4444' },
+                  ].map(opt => (
+                    <button key={opt.value} type="button"
+                      onClick={() => setEditForm({...editForm, study_status: opt.value})}
+                      className="py-2 px-3 rounded-lg text-sm font-semibold border-2 transition"
+                      style={{
+                        borderColor: editForm.study_status === opt.value ? opt.color : 'var(--border)',
+                        background: editForm.study_status === opt.value ? opt.color + '20' : 'var(--bg)',
+                        color: editForm.study_status === opt.value ? opt.color : 'var(--text-muted)'
+                      }}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <label className="block text-sm font-bold mb-2" style={{color: 'var(--text)'}}>My Courses</label>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {editForm.courses.map(course => (
@@ -230,14 +254,14 @@ export default function Profile() {
               {/* Hero Banner */}
               <div 
                 className="h-24"
-                style={{background: 'linear-gradient(130deg, var(--accent-light) 0%, #D8D0FF 100%)'}}
+                style={{background: 'linear-gradient(130deg, #EDE8F8 0%, #D8D0FF 100%)'}}
               />
               
               {/* Avatar */}
               <div className="px-6 -mt-12 mb-4">
                 <div 
                   className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl font-bold text-white border-4 border-white"
-                  style={{background: 'linear-gradient(135deg, var(--accent), var(--accent2))', boxShadow: '0 4px 16px rgba(124,106,240,0.35)'}}
+                  style={{background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)', boxShadow: '0 4px 16px rgba(124,106,240,0.35)'}}
                 >
                   {profile?.full_name?.[0] || profile?.email?.[0] || 'U'}
                 </div>
@@ -256,7 +280,9 @@ export default function Profile() {
                   style={{background: 'var(--accent-light)'}}
                 >
                   <span className="text-sm font-bold" style={{color: 'var(--accent)'}}>
-                    🌱 Open to meeting people
+                    {profile?.study_status === 'studying' && '📚 Studying'}
+                    {profile?.study_status === 'busy'     && '🔴 Busy'}
+                    {(!profile?.study_status || profile?.study_status === 'available') && '🌱 Open to meeting people'}
                   </span>
                 </div>
               </div>
