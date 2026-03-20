@@ -3,17 +3,14 @@ import { supabase } from '../supabase'
 import { useNavigate } from 'react-router-dom'
 
 export default function Profile() {
-  const [user, setUser] = useState(null)
-  const [profile, setProfile] = useState(null)
-  const [editing, setEditing] = useState(false)
-  const [editForm, setEditForm] = useState({
-    full_name: '',
-    major: '',
-    year: '',
-    about: '',
-    courses: [],
-    interests: [],
-    study_status: 'available'
+  const [user,        setUser]        = useState(null)
+  const [profile,     setProfile]     = useState(null)
+  const [editing,     setEditing]     = useState(false)
+  const [connections, setConnections] = useState([])
+  const [courseCount, setCourseCount] = useState(0)
+  const [editForm,    setEditForm]    = useState({
+    full_name: '', major: '', year: '', about: '',
+    courses: [], interests: [], study_status: 'available'
   })
   const navigate = useNavigate()
 
@@ -24,22 +21,36 @@ export default function Profile() {
       setUser(user)
 
       const { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+        .from('profiles').select('*').eq('id', user.id).single()
       setProfile(profile)
-      
-      // Initialize edit form
       setEditForm({
-        full_name: profile?.full_name || '',
-        major: profile?.major || '',
-        year: profile?.year || '',
-        about: profile?.about || '',
-        courses: profile?.courses || [],
-        interests: profile?.interests || [],
+        full_name:    profile?.full_name    || '',
+        major:        profile?.major        || '',
+        year:         profile?.year         || '',
+        about:        profile?.about        || '',
+        courses:      profile?.courses      || [],
+        interests:    profile?.interests    || [],
         study_status: profile?.study_status || 'available'
       })
+
+      // Load real connections
+      const { data: conns } = await supabase
+        .from('connections')
+        .select('sender_id, receiver_id')
+        .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+        .eq('status', 'accepted')
+      const connectedIds = conns?.map(c => c.sender_id === user.id ? c.receiver_id : c.sender_id) || []
+      if (connectedIds.length > 0) {
+        const { data: connProfiles } = await supabase.from('profiles').select('*').in('id', connectedIds)
+        setConnections(connProfiles || [])
+      } else {
+        setConnections([])
+      }
+
+      // Real course count from user_courses table
+      const { data: enrolled } = await supabase
+        .from('user_courses').select('id').eq('user_id', user.id)
+      setCourseCount(enrolled?.length || profile?.courses?.length || 0)
     }
     init()
   }, [])
@@ -288,23 +299,20 @@ export default function Profile() {
               </div>
 
               {/* Stats */}
-              <div 
-                className="grid grid-cols-3 border-t border-b"
-                style={{borderColor: '#F0F0F6'}}
-              >
+              <div className="grid grid-cols-3 border-t border-b" style={{borderColor: '#F0F0F6'}}>
                 <div className="text-center py-4 border-r" style={{borderColor: '#F0F0F6'}}>
-                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>
-                    {profile?.courses?.length || 0}
-                  </div>
+                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>{courseCount}</div>
                   <div className="text-xs" style={{color: 'var(--text-muted)'}}>Courses</div>
                 </div>
                 <div className="text-center py-4 border-r" style={{borderColor: '#F0F0F6'}}>
-                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>0</div>
-                  <div className="text-xs" style={{color: 'var(--text-muted)'}}>Groups</div>
+                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>{connections.length}</div>
+                  <div className="text-xs" style={{color: 'var(--text-muted)'}}>Connections</div>
                 </div>
                 <div className="text-center py-4">
-                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>0</div>
-                  <div className="text-xs" style={{color: 'var(--text-muted)'}}>Connections</div>
+                  <div className="text-2xl font-bold" style={{color: 'var(--accent)'}}>
+                    {profile?.courses?.length || 0}
+                  </div>
+                  <div className="text-xs" style={{color: 'var(--text-muted)'}}>Interests</div>
                 </div>
               </div>
 
@@ -376,24 +384,42 @@ export default function Profile() {
             </div>
 
             {/* Connections */}
-            <div 
-              className="rounded-2xl p-6"
-              style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}
-            >
-              <h3 className="font-bold mb-4" style={{color: 'var(--text)'}}>Your Connections</h3>
-              
-              <div className="text-center py-8" style={{color: 'var(--text-muted)'}}>
-                <p>No connections yet</p>
-                <p className="text-sm mt-2">
-                  <button 
-                    onClick={() => navigate('/people')}
-                    className="text-sm font-bold"
-                    style={{color: 'var(--accent)'}}
-                  >
+            <div className="rounded-2xl p-6"
+                 style={{background: 'var(--card)', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', border: '1px solid var(--border)'}}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold" style={{color: 'var(--text)'}}>
+                  Your Connections ({connections.length})
+                </h3>
+                <button onClick={() => navigate('/people')}
+                  className="text-xs font-bold" style={{color: 'var(--accent)'}}>
+                  Find more →
+                </button>
+              </div>
+              {connections.length === 0 ? (
+                <div className="text-center py-8" style={{color: 'var(--text-muted)'}}>
+                  <p>No connections yet</p>
+                  <button onClick={() => navigate('/people')}
+                    className="text-sm font-bold mt-2 block mx-auto" style={{color: 'var(--accent)'}}>
                     Find students to connect with →
                   </button>
-                </p>
-              </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  {connections.map(c => (
+                    <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl"
+                         style={{background: 'var(--bg)'}}>
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white flex-shrink-0"
+                           style={{background: 'linear-gradient(135deg, #7B5EA7, #9B7FCC)'}}>
+                        {c.full_name?.[0] || c.email?.[0] || '?'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-sm truncate" style={{color: 'var(--text)'}}>{c.full_name || c.email}</p>
+                        <p className="text-xs truncate" style={{color: 'var(--text-muted)'}}>{c.major || 'Student'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </div>
